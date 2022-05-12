@@ -14,17 +14,17 @@ const convertWithOptions = (document, format, filter, options, callback) => {
     const installDir = tmp.dirSync({prefix: 'soffice', unsafeCleanup: true, ...tmpOptions});
     return async.auto({
         soffice: (callback) => {
-            let paths = [];
+            let paths = options.extraPaths || [];
             switch (process.platform) {
-                case 'darwin': paths = ['/Applications/LibreOffice.app/Contents/MacOS/soffice'];
+                case 'darwin': paths = paths.concat(['/Applications/LibreOffice.app/Contents/MacOS/soffice']);
                     break;
-                case 'linux': paths = ['/usr/bin/libreoffice', '/usr/bin/soffice', '/snap/bin/libreoffice'];
+                case 'linux': paths = paths.concat(['/usr/bin/libreoffice', '/usr/bin/soffice', '/snap/bin/libreoffice']);
                     break;
-                case 'win32': paths = [
+                case 'win32': paths = paths.concat([
                     path.join(process.env['PROGRAMFILES(X86)'], 'LIBREO~1/program/soffice.exe'),
                     path.join(process.env['PROGRAMFILES(X86)'], 'LibreOffice/program/soffice.exe'),
                     path.join(process.env.PROGRAMFILES, 'LibreOffice/program/soffice.exe'),
-                ];
+                ]);
                     break;
                 default:
                     return callback(new Error(`Operating system not yet supported: ${process.platform}`));
